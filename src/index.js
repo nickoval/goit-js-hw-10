@@ -15,9 +15,11 @@ const refs = {
 refs.inputName.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(evt) {
-  refs.countryInfo.textContent = evt.target.value.trim();
+  if (evt.target.value.trim() === '') {
+    return clearAll();
+  }
   console.log(evt.target.value.trim());
-  fetchCountries(evt.target.value.trim());
+  fetchCountries(evt.target.value.trim().toLowerCase());
 }
 
 function fetchCountries(name) {
@@ -37,37 +39,77 @@ function fetchCountries(name) {
       // refs.countryInfo.innerHTML = markup;
       // const markup = countryCardMarkup(country);
       // console.log('fetchCountries ~ markup', markup);
+    })
+    .catch(error => {
+      Notify.failure('Oops, there is no country with that name');
     });
-  // fetch(
-  //   `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`
-  // )
-  //   .then(response => {
-  //     response.json();
-  //     console.log(response);
-  //     // Response handling
-  //   })
-  //   // .then(data => {})
-  //   .catch(error => {
-  //     // Error handling
-  //     console.log(error);
-  //   });
 }
 
-// fetchCountries('peru');
-
-// https://restcountries.com/v2/all?fields=name,capital,currencies
-
 function dataAnalysis(data) {
+  clearAll();
   if (data.length > 10) {
     Notify.failure(
       'Too many matches found. Please enter a more specific name.'
     );
   } else if (data.length > 1) {
     console.log('Some countryes');
-    refs.coutnryList.insertAdjacentHTML('beforeend', markupCountries);
+    // refs.countryList.innrHTML = data
+    //   .map(
+    //     country =>
+    //       ` <img src='${country.flags.svg}' alt='${country.name.official}' width='150'/> <h3 class='country-name'>${country.name.official}</h3>`
+    //   )
+    //   .join('');
+    refs.countryList.insertAdjacentHTML(
+      'beforeend',
+      data
+        .map(
+          country =>
+            `  <img src='${country.flags.svg}' alt='${country.name.official}' width='150'/>
+          <h3 class='country-name'>${country.name.official}</h3>`
+        )
+        .join('')
+    );
+    // refs.countryList.innerHTM = markupCountries(data);
   } else if (data.length === 1) {
     console.log('ONE country !!!');
-    refs.coutnryInfo.insertAdjacentHTML('beforeend', markupCountry);
+    //   refs.countryInfo.innerHTML = data.map(
+    //     country =>
+    //       `  <img src='${country.flags.svg}' alt='${
+    //         country.name.official
+    //       }' width='200'/>
+    //         <h2 class='country-name'>${
+    //           country.name.official
+    //         }</h2>  <p class='country-capital'><b>Capital: </b>${
+    //         country.capital
+    //       }</p>
+    // <p class='country-population'><b>Population: </b>${
+    //   country.population
+    // }</p>  <p class='country-languages'><b>Languages: </b>${Object.values(
+    //         country.languages
+    //       )}</p>
+    // `
+    //   );
+    refs.countryInfo.insertAdjacentHTML(
+      'beforeend',
+      data.map(
+        country =>
+          `  <img src='${country.flags.svg}' alt='${
+            country.name.official
+          }' width='200'/>
+            <h2 class='country-name'>${
+              country.name.official
+            }</h2>  <p class='country-capital'><b>Capital: </b>${
+            country.capital
+          }</p>
+    <p class='country-population'><b>Population: </b>${
+      country.population
+    }</p>  <p class='country-languages'><b>Languages: </b>${Object.values(
+            country.languages
+          )}</p>
+    `
+      )
+    );
+    // refs.countryInfo.innertHTML = markupCountry(data);
   }
 }
 
@@ -75,13 +117,19 @@ function markupCountries(countries) {
   const markup = countries
     .map(country => `<h2 class='country-name'>${country.name.oficial}</h2>`)
     .join('');
+  return markup;
 }
 
-function markupCountry(countries) {
-  const markup = countries.map(
-    country =>
-      `  <img src='${country.flags.svg}' alt='${country.capital}' /> <h2 class='country-name'>${country.name.oficial}</h2>  <p class='country-capital'><b>Capital: </b>${country.capital}</p>
-  <p class='country-population'><b>Population: </b>${country.population}</p>
-  <p class='country-population'><b>Languages: </b>${country.languages}</p>`
-  );
+// function markupCountry(countries) {
+//   return countries.map(
+//     country =>
+//       `  <img src='${country.flags.svg}' alt='${country.capital}' /> <h2 class='country-name'>${country.name.oficial}</h2>  <p class='country-capital'><b>Capital: </b>${country.capital}</p>
+//   <p class='country-population'><b>Population: </b>${country.population}</p>
+//   `
+//   );
+// }
+
+function clearAll() {
+  refs.countryList.innerHTML = '';
+  refs.countryInfo.innerHTML = '';
 }
