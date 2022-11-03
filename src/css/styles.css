@@ -18,3 +18,17 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+
+ul {
+  marker: none;
+  padding: 0;
+  margin: 0;
+}
+
+.country-item {
+  display: flex;
+  align-items: center;
+  padding-bottom: 2rem;
+  padding-left: 1rem;
+  gap: 2rem;
+}
