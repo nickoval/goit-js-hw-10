@@ -2,6 +2,7 @@ import './css/styles.css';
 import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchCountries } from './fetchCountries';
+import { markupCountriesList, markupCountryInfo } from './renderMarkups';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -24,6 +25,7 @@ function onInput(evt) {
       dataAnalysis(countryData);
     })
     .catch(error => {
+      console.log('onInput ~ error', error);
       Notify.failure('Oops, there is no country with that name');
     });
 }
@@ -41,37 +43,90 @@ function dataAnalysis(data) {
   }
 }
 
+function clearAll() {
+  refs.countryList.innerHTML = '';
+  refs.countryInfo.innerHTML = '';
+}
+
+// Вариант с вынесением разметки в отдельный модуль
+// -----------------------------------------
 function renderCountriesList(countries) {
   refs.countryList.insertAdjacentHTML(
     'beforeend',
-    countries
-      .map(
-        ({ flags, name }) =>
-          ` <li class='country-item'> <img src='${flags.svg}' alt='${name.official}' width='150'/>
-          <h3 class='country-name'>${name.official}</h3> </li>`
-      )
-      .join('')
+    countries.map(markupCountriesList).join('')
   );
 }
 
 function renderCountryInfo(countries) {
   refs.countryInfo.insertAdjacentHTML(
     'beforeend',
-    countries.map(
-      ({ flags, name, capital, population, languages }) =>
-        `  <img src='${flags.svg}' alt='${name.official}' width='200'/>
-            <h2 class='country-name'>${
-              name.official
-            }</h2>  <p class='country-capital'><b>Capital: </b>${capital}</p>
-    <p class='country-population'><b>Population: </b>${population}</p>  <p class='country-languages'><b>Languages: </b>${Object.values(
-          languages
-        )}</p>
-    `
-    )
+    countries.map(markupCountryInfo)
   );
 }
+// ========================================
 
-function clearAll() {
-  refs.countryList.innerHTML = '';
-  refs.countryInfo.innerHTML = '';
-}
+//Вариант без дробления функций (как здавалась домашка)
+// -------------------------------------------------
+// function renderCountriesList(countries) {
+//   refs.countryList.insertAdjacentHTML(
+//     'beforeend',
+//     countries
+//       .map(
+//         ({ flags, name }) =>
+//           ` <li class='country-item'> <img src='${flags.svg}' alt='${name.official}' width='150'/>
+//           <h3 class='country-name'>${name.official}</h3> </li>`
+//       )
+//       .join('')
+//   );
+// }
+
+// function renderCountryInfo(countries) {
+//   refs.countryInfo.insertAdjacentHTML(
+//     'beforeend',
+//     countries.map(
+//       ({ flags, name, capital, population, languages }) =>
+//         `  <img src='${flags.svg}' alt='${name.official}' width='200'/>
+//             <h2 class='country-name'>${
+//               name.official
+//             }</h2>  <p class='country-capital'><b>Capital: </b>${capital}</p>
+//     <p class='country-population'><b>Population: </b>${population}</p>  <p class='country-languages'><b>Languages: </b>${Object.values(
+//           languages
+//         )}</p>
+//     `
+//     )
+//   );
+// }
+// ==========================================================
+
+// //Вариант c дроблением функций
+// --------------------------------------------------------
+// function renderCountriesList(countries) {
+//   refs.countryList.insertAdjacentHTML(
+//     'beforeend',
+//     countries.map(markupCountriesList).join('')
+//   );
+// }
+
+// function markupCountriesList({ flags, name }) {
+//   return ` <li class='country-item'> <img src='${flags.svg}' alt='${name.official}' width='150'/>
+//           <h3 class='country-name'>${name.official}</h3> </li>`;
+// }
+
+// function renderCountryInfo(countries) {
+//   refs.countryInfo.insertAdjacentHTML(
+//     'beforeend',
+//     countries.map(markupCountryInfo)
+//   );
+// }
+
+// function markupCountryInfo({ flags, name, capital, population, languages }) {
+//   return `  <img src='${flags.svg}' alt='${name.official}' width='200'/>
+//             <h2 class='country-name'>${
+//               name.official
+//             }</h2>  <p class='country-capital'><b>Capital: </b>${capital}</p>
+//     <p class='country-population'><b>Population: </b>${population}</p>  <p class='country-languages'><b>Languages: </b>${Object.values(
+//     languages
+//   )}</p>
+//     `;
+// }
+// =============================================================================
