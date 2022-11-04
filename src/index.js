@@ -30,19 +30,6 @@ function onInput(evt) {
     });
 }
 
-function dataAnalysis(data) {
-  clearAll();
-  if (data.length > 10) {
-    Notify.failure(
-      'Too many matches found. Please enter a more specific name.'
-    );
-  } else if (data.length > 1) {
-    renderCountriesList(data);
-  } else if (data.length === 1) {
-    renderCountryInfo(data);
-  }
-}
-
 function clearAll() {
   refs.countryList.innerHTML = '';
   refs.countryInfo.innerHTML = '';
@@ -50,20 +37,56 @@ function clearAll() {
 
 // Вариант с вынесением разметки в отдельный модуль
 // -----------------------------------------
-function renderCountriesList(countries) {
-  refs.countryList.insertAdjacentHTML(
-    'beforeend',
-    countries.map(markupCountriesList).join('')
-  );
+function dataAnalysis(data) {
+  clearAll();
+  if (data.length > 10) {
+    Notify.failure(
+      'Too many matches found. Please enter a more specific name.'
+    );
+  } else if (data.length > 1) {
+    // renderCountriesList(data);
+    refs.countryList.insertAdjacentHTML(
+      'beforeend',
+      data.map(markupCountriesList).join('')
+    );
+  } else if (data.length === 1) {
+    // renderCountryInfo(data);
+    refs.countryInfo.insertAdjacentHTML(
+      'beforeend',
+      data.map(markupCountryInfo)
+    );
+  }
 }
 
-function renderCountryInfo(countries) {
-  refs.countryInfo.insertAdjacentHTML(
-    'beforeend',
-    countries.map(markupCountryInfo)
-  );
-}
+// function renderCountriesList(countries) {
+//   refs.countryList.insertAdjacentHTML(
+//     'beforeend',
+//     countries.map(markupCountriesList).join('')
+//   );
+// }
+
+// function renderCountryInfo(countries) {
+//   refs.countryInfo.insertAdjacentHTML(
+//     'beforeend',
+//     countries.map(markupCountryInfo)
+//   );
+// }
 // ========================================
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// function dataAnalysis(data) {
+//   clearAll();
+//   if (data.length > 10) {
+//     Notify.failure(
+//       'Too many matches found. Please enter a more specific name.'
+//     );
+//   } else if (data.length > 1) {
+//     renderCountriesList(data);
+//   } else if (data.length === 1) {
+//     renderCountryInfo(data);
+//   }
+// }
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //Вариант без дробления функций (как здавалась домашка)
 // -------------------------------------------------
